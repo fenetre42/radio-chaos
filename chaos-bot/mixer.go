@@ -36,6 +36,24 @@ func mixerBot() error {
 	if err != nil {
 		return err
 	}
+	err = c.On("event:join", func(h *gosocketio.Channel, args Message) {
+		log.Printf("--- got event:join: %v", args)
+	})
+	if err != nil {
+		return err
+	}
+	err = c.On("/event:join", func(h *gosocketio.Channel, args Message) {
+		log.Printf("--- got /event:join: %v", args)
+	})
+	if err != nil {
+		return err
+	}
+	err = c.On("event:broadcast", func(h *gosocketio.Channel, args Message) {
+		log.Printf("--- got event:broadcast: %v", args)
+	})
+	if err != nil {
+		return err
+	}
 
 	err = c.On(gosocketio.OnDisconnection, func(h *gosocketio.Channel) {
 		log.Fatal("--- disconnected")
@@ -51,11 +69,13 @@ func mixerBot() error {
 		return err
 	}
 
-	go sendJoin(c)
-	go sendJoin(c)
-	go sendJoin(c)
-	go sendJoin(c)
-	go sendJoin(c)
+	/*
+		go sendJoin(c)
+		go sendJoin(c)
+		go sendJoin(c)
+		go sendJoin(c)
+		go sendJoin(c)
+	*/
 
 	var g run.Group
 	{
