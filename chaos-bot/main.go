@@ -24,6 +24,7 @@ func main() {
 		debug          = rootFlagSet.Bool("debug", false, "verbose")
 		discordFlagSet = flag.NewFlagSet("discord", flag.ExitOnError)
 		discordToken   = discordFlagSet.String("discord-token", "", "Discord Bot Token")
+		mixerFlagSet   = flag.NewFlagSet("mixer-bot", flag.ExitOnError)
 	)
 
 	discordBot := &ffcli.Command{
@@ -34,9 +35,20 @@ func main() {
 		},
 	}
 
+	mixerBot := &ffcli.Command{
+		Name:    "mixer-bot",
+		FlagSet: mixerFlagSet,
+		Exec: func(_ context.Context, _ []string) error {
+			return mixerBot()
+		},
+	}
+
 	root := &ffcli.Command{
 		FlagSet:     rootFlagSet,
-		Subcommands: []*ffcli.Command{discordBot},
+		Subcommands: []*ffcli.Command{discordBot, mixerBot},
+		Exec: func(context.Context, []string) error {
+			return flag.ErrHelp
+		},
 	}
 
 	err := root.ParseAndRun(context.Background(), os.Args[1:])
